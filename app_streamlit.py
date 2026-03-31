@@ -3,7 +3,14 @@ from transformers import pipeline
 
 st.title("Question Answering System")
 
-qa_pipeline = pipeline("question-answering")
+@st.cache_resource
+def load_model():
+    return pipeline(
+        "question-answering",
+        model="distilbert-base-uncased-distilled-squad"
+    )
+
+qa_pipeline = load_model()
 
 context = st.text_area("Enter context:")
 question = st.text_input("Enter your question:")
