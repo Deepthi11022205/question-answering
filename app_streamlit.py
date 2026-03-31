@@ -13,14 +13,19 @@ context = st.text_area("📄 Enter context:", value=default_context, height=150)
 # API
 API_URL = "https://api-inference.huggingface.co/models/distilbert-base-uncased-distilled-squad"
 
-def query(payload):
-    response = requests.post(API_URL, json=payload)
-    data = response.json()
+import time
 
-    if isinstance(data, dict) and "answer" in data:
-        return data
-    else:
-        return {"answer": "⚠️ Model not ready / Try again"}
+def query(payload):
+    for _ in range(3):  # try 3 times
+        response = requests.post(API_URL, json=payload)
+        data = response.json()
+
+        if isinstance(data, dict) and "answer" in data:
+            return data
+
+        time.sleep(2)  # wait before retry
+
+    return {"answer": "⚠️ Model still loading, please try again"}
 
 # Input question
 question = st.text_input("❓ Ask a question:").strip().capitalize()
