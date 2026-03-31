@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>QA System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  /* ── Reset & Variables ─────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0b0d11;
+    --surface:   #111318;
+    --border:    #1e2229;
+    --muted:     #3a3f4a;
+    --text:      #e8eaf0;
+    --dim:       #6b7280;
+    --accent:    #4afa9a;
+    --accent2:   #3be0ff;
+    --danger:    #ff5c5c;
+    --mono:      "DM Mono", monospace;
+    --sans:      "Syne", sans-serif;
+    --radius:    10px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 16px 80px;
+    overflow-x: hidden;
+  }
+
+  /* ── Background grid ──────────────────────────────────── */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: .35;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Layout wrapper ───────────────────────────────────── */
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 820px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  /* ── Header ───────────────────────────────────────────── */
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(74,250,154,.08);
+    border: 1px solid rgba(74,250,154,.2);
+    padding: 4px 10px;
+    border-radius: 20px;
+    width: fit-content;
+  }
+  .badge::before { content: "◉"; font-size: 8px; animation: pulse 2s infinite; }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50%      { opacity: .3; }
+  }
+
+  h1 {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    line-height: 1.1;
+    color: var(--text);
+  }
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--dim);
+  }
+
+  /* ── Cards ────────────────────────────────────────────── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .card-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Inputs ───────────────────────────────────────────── */
+  textarea, input[type="text"] {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 14px 16px;
+    resize: vertical;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    line-height: 1.6;
+  }
+  textarea:focus, input[type="text"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(74,250,154,.08);
+  }
+  textarea { min-height: 130px; }
+
+  /* ── Preset pills ─────────────────────────────────────── */
+  .presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 2px;
+  }
+  .preset-btn {
+    background: none;
+    border: 1px solid var(--muted);
+    color: var(--dim);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .preset-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(74,250,154,.05);
+  }
+
+  /* ── Ask button ────────────────────────────────────────── */
+  .ask-btn {
+    align-self: flex-end;
+    background: var(--accent);
+    color: #0b0d11;
+    border: none;
+    border-radius: 6px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    padding: 12px 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform .15s, opacity .15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .ask-btn:hover  { transform: translateY(-1px); opacity: .9; }
+  .ask-btn:active { transform: translateY(0); }
+  .ask-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+  .ask-btn .spinner {
+    display: none;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(0,0,0,.3);
+    border-top-color: #000;
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .ask-btn.loading .spinner { display: block; }
+  .ask-btn.loading .btn-text { opacity: .5; }
+
+  /* ── Answer panel ─────────────────────────────────────── */
+  .answer-panel {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: none;
+    animation: slideIn .25s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .answer-panel.visible { display: block; }
+
+  .answer-header {
+    background: var(--surface);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+
+  .answer-body {
+    padding: 22px 24px;
+    background: var(--bg);
+  }
+
+  .answer-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+  .answer-text.error-msg { color: var(--danger); font-size: 15px; }
+
+  /* Confidence bar */
+  .meta-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--dim);
+  }
+  .conf-bar-wrap {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .conf-bar {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    transition: width .5s cubic-bezier(.34,1.56,.64,1);
+    width: 0%;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    color: var(--dim);
+  }
+  .tag.high   { border-color: rgba(74,250,154,.3); color: var(--accent); }
+  .tag.medium { border-color: rgba(59,224,255,.3); color: var(--accent2); }
+  .tag.low    { border-color: rgba(255,92,92,.3);  color: var(--danger); }
+
+  /* ── Candidates accordion ─────────────────────────────── */
+  .candidates-toggle {
+    margin-top: 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    user-select: none;
+    width: fit-content;
+    transition: color .15s;
+  }
+  .candidates-toggle:hover { color: var(--text); }
+  .candidates-toggle .chevron { transition: transform .2s; }
+  .candidates-toggle.open .chevron { transform: rotate(90deg); }
+
+  .candidates-list {
+    display: none;
+    margin-top: 10px;
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .candidates-list.open { display: flex; }
+
+  .cand-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .cand-rank {
+    color: var(--muted);
+    width: 18px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .cand-answer { color: var(--text); flex: 1; }
+  .cand-score  { color: var(--dim); }
+
+  /* ── History ──────────────────────────────────────────── */
+  .history-section { display: none; }
+  .history-section.visible { display: flex; flex-direction: column; gap: 10px; }
+
+  .history-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+    cursor: pointer;
+    transition: border-color .15s;
+  }
+  .history-item:hover { border-color: var(--muted); }
+  .history-q { color: var(--dim); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .history-a { color: var(--text); font-weight: 500; flex: 2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .history-score { color: var(--accent); flex-shrink: 0; }
+
+  /* ── Footer ───────────────────────────────────────────── */
+  footer {
+    margin-top: 40px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 2;
+  }
+  footer a { color: var(--dim); text-decoration: none; }
+  footer a:hover { color: var(--text); }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <header>
+    <span class="badge">DistilBERT · SQuAD</span>
+    <h1>Question <span>Answering</span><br>System</h1>
+    <p class="subtitle">// extractive NLP · transformer-based · real-time inference</p>
+  </header>
+
+  <!-- ── Context card ────────────────────────────────────── -->
+  <div class="card">
+    <div class="card-label">01 · Context Passage</div>
+    <textarea id="ctx" placeholder="Paste or type the passage you want to search for answers…"></textarea>
+    <div class="presets">
+      <span style="font-family:var(--mono);font-size:11px;color:var(--muted);align-self:center">Presets →</span>
+      <button class="preset-btn" onclick="loadPreset('ai')">AI</button>
+      <button class="preset-btn" onclick="loadPreset('python')">Python</button>
+      <button class="preset-btn" onclick="loadPreset('ml')">Machine Learning</button>
+      <button class="preset-btn" onclick="loadPreset('space')">Space Exploration</button>
+    </div>
+  </div>
+
+  <!-- ── Question card ───────────────────────────────────── -->
+  <div class="card">
+    <div class="card-label">02 · Your Question</div>
+    <input type="text" id="qst" placeholder="e.g. Who created Python?" />
+    <button class="ask-btn" id="askBtn" onclick="askQuestion()">
+      <span class="btn-text">Ask</span>
+      <div class="spinner"></div>
+      <span style="font-size:16px">→</span>
+    </button>
+  </div>
+
+  <!-- ── Answer panel ────────────────────────────────────── -->
+  <div class="answer-panel" id="answerPanel">
+    <div class="answer-header">
+      <span>03 · Answer</span>
+      <span id="latencyTag" class="tag"></span>
+    </div>
+    <div class="answer-body">
+      <div class="answer-text" id="answerText"></div>
+
+      <div class="meta-row">
+        <span id="confLabel">—</span>
+        <div class="conf-bar-wrap"><div class="conf-bar" id="confBar"></div></div>
+        <span id="confTag" class="tag"></span>
+      </div>
+
+      <div class="candidates-toggle" id="candToggle" onclick="toggleCandidates()">
+        <span class="chevron">▶</span>
+        <span id="candLabel">View all candidates</span>
+      </div>
+      <div class="candidates-list" id="candList"></div>
+    </div>
+  </div>
+
+  <!-- ── History ─────────────────────────────────────────── -->
+  <div class="history-section" id="historySection">
+    <div class="card-label">Recent Queries</div>
+    <div id="historyList"></div>
+  </div>
+
+</div><!-- /wrapper -->
+
+<footer>
+  Powered by <a href="https://huggingface.co/distilbert-base-cased-distilled-squad" target="_blank">distilbert-base-cased-distilled-squad</a>
+  · HuggingFace Transformers · FastAPI<br>
+  API endpoint: <code>POST /ask</code>
+</footer>
+
+<script>
+/* ─────────────────────────────────────────────────────────────
+   Configuration — change API_BASE to your deployed URL
+───────────────────────────────────────────────────────────── */
+const API_BASE = "http://localhost:8000";
+
+/* ─── Preset contexts ──────────────────────────────────────── */
+const PRESETS = {
+  ai: {
+    ctx: "Artificial intelligence (AI) is intelligence demonstrated by machines, as opposed to the natural intelligence displayed by animals including humans. AI research has been defined as the field of study of intelligent agents, which refers to any system that perceives its environment and takes actions that maximize its chance of achieving its goals.",
+    q:   "What is artificial intelligence?"
+  },
+  python: {
+    ctx: "Python is a high-level, general-purpose programming language. Its design philosophy emphasizes code readability with the use of significant indentation. Python is dynamically typed and garbage-collected. Guido van Rossum began working on Python in the late 1980s as a successor to the ABC programming language and first released it in 1991.",
+    q:   "Who created Python?"
+  },
+  ml: {
+    ctx: "Machine learning (ML) is a field of inquiry devoted to understanding and building methods that 'learn', that is, methods that leverage data to improve performance on some set of tasks. Machine learning algorithms build a model based on sample data, known as training data, in order to make predictions or decisions without being explicitly programmed to do so.",
+    q:   "What is machine learning?"
+  },
+  space: {
+    ctx: "The Space Age began on October 4, 1957 when the Soviet Union launched Sputnik 1, the world's first artificial satellite. NASA was established in 1958. The first human spaceflight was by Soviet cosmonaut Yuri Gagarin on April 12, 1961. The Apollo 11 mission successfully landed the first humans on the Moon on July 20, 1969.",
+    q:   "When did the Space Age begin?"
+  }
+};
+
+function loadPreset(key) {
+  const p = PRESETS[key];
+  document.getElementById("ctx").value = p.ctx;
+  document.getElementById("qst").value = p.q;
+  document.getElementById("qst").focus();
+}
+
+/* ─── History store ────────────────────────────────────────── */
+const history = [];
+
+/* ─── Main ask function ────────────────────────────────────── */
+async function askQuestion() {
+  const ctx = document.getElementById("ctx").value.trim();
+  const qst = document.getElementById("qst").value.trim();
+  const btn = document.getElementById("askBtn");
+
+  // ── Validation ─────────────────────────────────────────────
+  if (!ctx)  { shakeInput("ctx"); return; }
+  if (!qst)  { shakeInput("qst"); return; }
+
+  // ── Loading state ───────────────────────────────────────────
+  btn.classList.add("loading");
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(`${API_BASE}/ask`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ context: ctx, question: qst, top_k: 3 }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      renderAnswer({ error: err.detail || `HTTP ${res.status}` });
+      return;
+    }
+
+    const data = await res.json();
+    renderAnswer(data);
+    addHistory(qst, data);
+
+  } catch (err) {
+    renderAnswer({ error: `Could not reach API at ${API_BASE}. Is the server running?` });
+  } finally {
+    btn.classList.remove("loading");
+    btn.disabled = false;
+  }
+}
+
+/* ─── Render answer ────────────────────────────────────────── */
+function renderAnswer(data) {
+  const panel      = document.getElementById("answerPanel");
+  const answerText = document.getElementById("answerText");
+  const confLabel  = document.getElementById("confLabel");
+  const confBar    = document.getElementById("confBar");
+  const confTag    = document.getElementById("confTag");
+  const latencyTag = document.getElementById("latencyTag");
+  const candToggle = document.getElementById("candToggle");
+  const candList   = document.getElementById("candList");
+
+  panel.classList.add("visible");
+
+  if (data.error && data.score === 0) {
+    answerText.textContent = data.error;
+    answerText.className   = "answer-text error-msg";
+    confLabel.textContent  = "";
+    confBar.style.width    = "0%";
+    confTag.textContent    = "";
+    latencyTag.textContent = "";
+    candToggle.style.display = "none";
+    return;
+  }
+
+  answerText.textContent = data.answer;
+  answerText.className   = "answer-text";
+
+  const pct = Math.round((data.score || 0) * 100);
+  confLabel.textContent  = `${pct}% confidence`;
+  confBar.style.width    = `${pct}%`;
+  latencyTag.textContent = `${data.latency_ms} ms`;
+
+  if (pct >= 70)      { confTag.textContent = "High";   confTag.className = "tag high"; }
+  else if (pct >= 35) { confTag.textContent = "Medium"; confTag.className = "tag medium"; }
+  else                { confTag.textContent = "Low";    confTag.className = "tag low"; }
+
+  // Candidates
+  const cands = (data.candidates || []).slice(1); // skip #1 (already shown)
+  if (cands.length) {
+    candToggle.style.display = "flex";
+    candLabel.textContent    = `${cands.length} more candidate${cands.length > 1 ? "s" : ""}`;
+    candList.innerHTML       = cands.map((c, i) => `
+      <div class="cand-item">
+        <span class="cand-rank">#${i + 2}</span>
+        <span class="cand-answer">${escHtml(c.answer)}</span>
+        <span class="cand-score">${(c.score * 100).toFixed(1)}%</span>
+      </div>`).join("");
+    candList.classList.remove("open");
+    document.getElementById("candToggle").classList.remove("open");
+  } else {
+    candToggle.style.display = "none";
+  }
+
+  panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function toggleCandidates() {
+  const toggle = document.getElementById("candToggle");
+  const list   = document.getElementById("candList");
+  toggle.classList.toggle("open");
+  list.classList.toggle("open");
+}
+
+/* ─── History ──────────────────────────────────────────────── */
+function addHistory(question, data) {
+  if (data.error) return;
+  history.unshift({ question, answer: data.answer, score: data.score });
+  if (history.length > 6) history.pop();
+
+  const section = document.getElementById("historySection");
+  const list    = document.getElementById("historyList");
+
+  section.classList.add("visible");
+  list.innerHTML = history.map(h => `
+    <div class="history-item" onclick="restoreHistory(${JSON.stringify(h.question).replace(/"/g,'&quot;')})">
+      <span class="history-q">${escHtml(h.question)}</span>
+      <span class="history-a">${escHtml(h.answer)}</span>
+      <span class="history-score">${(h.score * 100).toFixed(0)}%</span>
+    </div>`).join("");
+}
+
+function restoreHistory(q) {
+  document.getElementById("qst").value = q;
+  document.getElementById("qst").focus();
+}
+
+/* ─── Helpers ──────────────────────────────────────────────── */
+function shakeInput(id) {
+  const el = document.getElementById(id);
+  el.style.borderColor = "var(--danger)";
+  el.style.boxShadow   = "0 0 0 3px rgba(255,92,92,.12)";
+  el.focus();
+  setTimeout(() => { el.style.borderColor = ""; el.style.boxShadow = ""; }, 1500);
+}
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;");
+}
+
+/* ─── Enter key support ────────────────────────────────────── */
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("qst").addEventListener("keydown", e => {
+    if (e.key === "Enter") askQuestion();
+  });
+
+  // Load default preset
+  loadPreset("python");
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+{
+  "version": "1.0",
+  "data": [
+    {
+      "title": "Artificial Intelligence",
+      "paragraphs": [
+        {
+          "context": "Artificial intelligence (AI) is intelligence demonstrated by machines, as opposed to the natural intelligence displayed by animals including humans. AI research has been defined as the field of study of intelligent agents, which refers to any system that perceives its environment and takes actions that maximize its chance of achieving its goals. The term 'artificial intelligence' had previously been used to describe machines that mimic and display human cognitive skills associated with the human mind, such as learning and problem-solving.",
+          "qas": [
+            {
+              "id": "001",
+              "question": "What is artificial intelligence?",
+              "answers": [
+                {
+                  "text": "intelligence demonstrated by machines",
+                  "answer_start": 36
+                }
+              ],
+              "is_impossible": false
+            },
+            {
+              "id": "002",
+              "question": "How is AI research defined?",
+              "answers": [
+                {
+                  "text": "the field of study of intelligent agents",
+                  "answer_start": 152
+                }
+              ],
+              "is_impossible": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Python Programming",
+      "paragraphs": [
+        {
+          "context": "Python is a high-level, general-purpose programming language. Its design philosophy emphasizes code readability with the use of significant indentation. Python is dynamically typed and garbage-collected. It supports multiple programming paradigms, including structured, object-oriented and functional programming. It is often described as a 'batteries included' language due to its comprehensive standard library. Guido van Rossum began working on Python in the late 1980s as a successor to the ABC programming language.",
+          "qas": [
+            {
+              "id": "003",
+              "question": "Who created Python?",
+              "answers": [
+                {
+                  "text": "Guido van Rossum",
+                  "answer_start": 397
+                }
+              ],
+              "is_impossible": false
+            },
+            {
+              "id": "004",
+              "question": "What does 'batteries included' mean for Python?",
+              "answers": [
+                {
+                  "text": "its comprehensive standard library",
+                  "answer_start": 351
+                }
+              ],
+              "is_impossible": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Machine Learning",
+      "paragraphs": [
+        {
+          "context": "Machine learning (ML) is a field of inquiry devoted to understanding and building methods that 'learn', that is, methods that leverage data to improve performance on some set of tasks. It is seen as a part of artificial intelligence. Machine learning algorithms build a model based on sample data, known as training data, in order to make predictions or decisions without being explicitly programmed to do so. Machine learning algorithms are used in a wide variety of applications, such as in medicine, email filtering, speech recognition, and computer vision.",
+          "qas": [
+            {
+              "id": "005",
+              "question": "What is machine learning?",
+              "answers": [
+                {
+                  "text": "a field of inquiry devoted to understanding and building methods that 'learn'",
+                  "answer_start": 22
+                }
+              ],
+              "is_impossible": false
+            },
+            {
+              "id": "006",
+              "question": "What is training data in machine learning?",
+              "answers": [
+                {
+                  "text": "sample data",
+                  "answer_start": 259
+                }
+              ],
+              "is_impossible": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
