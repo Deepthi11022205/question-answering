@@ -7,7 +7,8 @@ st.title("Question Answering System")
 def load_model():
     return pipeline(
         "question-answering",
-        model="distilbert-base-uncased-distilled-squad"
+        model="distilbert-base-uncased-distilled-squad",
+        framework="pt"   # force lightweight mode
     )
 
 qa_pipeline = load_model()
