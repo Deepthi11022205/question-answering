@@ -1,23 +1,26 @@
 import streamlit as st
-from transformers import pipeline
+import requests
 
 st.title("Question Answering System")
 
-@st.cache_resource
-def load_model():
-    return pipeline(
-        "question-answering",
-        model="distilbert-base-uncased-distilled-squad"
-    )
+# HuggingFace API (free)
+API_URL = "https://api-inference.huggingface.co/models/distilbert-base-uncased-distilled-squad"
 
-qa_pipeline = load_model()
+def query(payload):
+    response = requests.post(API_URL, json=payload)
+    return response.json()
 
 context = st.text_area("Enter context:")
 question = st.text_input("Enter your question:")
 
 if st.button("Get Answer"):
     if context and question:
-        result = qa_pipeline(question=question, context=context)
-        st.write("Answer:", result["answer"])
+        result = query({
+            "inputs": {
+                "question": question,
+                "context": context
+            }
+        })
+        st.write("Answer:", result.get("answer", "No answer found"))
     else:
         st.warning("Please enter both context and question")
