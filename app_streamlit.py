@@ -15,10 +15,15 @@ API_URL = "https://api-inference.huggingface.co/models/distilbert-base-uncased-d
 
 def query(payload):
     response = requests.post(API_URL, json=payload)
-    return response.json()
+    data = response.json()
+
+    if isinstance(data, dict) and "answer" in data:
+        return data
+    else:
+        return {"answer": "⚠️ Model not ready / Try again"}
 
 # Input question
-question = st.text_input("❓ Ask a question:")
+question = st.text_input("❓ Ask a question:").strip().capitalize()
 
 if st.button("Get Answer"):
     if question:
